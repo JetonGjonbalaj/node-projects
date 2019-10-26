@@ -14,12 +14,29 @@ app.get('/api/quotes/random/', (req, res) => {
 });
 
 app.get('/api/quotes/', (req, res) => {
-  if (hasParameters(req.query)) {
+  const { person } = req.query;
+  
+  if (person)
+    return res.send({
+      quotes: quotes.filter(quote => quote.person == req.query.person)
+    })
 
+  return res.send({quotes});
+})
+
+app.post('/api/quotes/', (req, res) => {
+  const {quote, person} = req.query;
+  const newQuote = {
+    quote,
+    person
   }
-  return res.status(200).send();
+
+  if (quote && person) {
+    quotes.push(newQuote);
+    return res.send({quote: newQuote});
+  }
+
+  return res.status(400).send();
 })
 
-app.listen(PORT, () => {
-  console.log(`Server listening to port: ${PORT}`)
-})
+app.listen(PORT, () => console.log(`Server listening to port: ${PORT}`))
